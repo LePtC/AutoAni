@@ -38,8 +38,8 @@
 
 <table>
   <tr>
-    <td>视频教程（TODO）</td>
-    <!-- <td><a href="https://www.bilibili.com/video/av29577482">狸子教你用Flash做柱图可视化</a></td> -->
+    <td>视频教程</td>
+    <td><a href="https://www.bilibili.com/video/av31363620">狸子教你用自动化可视化模版</a></td>
   </tr>
 </table>
 
