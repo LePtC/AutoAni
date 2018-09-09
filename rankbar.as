@@ -61,7 +61,7 @@ function iconLoaded(e: Event): void {
 	image.width = 2 * rt;
 	image.height = 2 * rt;
 	image.x = cfg[23][0] - rt;
-	image.y = -rt;
+	image.y = 0;
 	addChildAt(image, 0);
 }
 
@@ -112,7 +112,7 @@ function updatey(i: int, scale: Number): void {
   }else{
 	  rec.width += (fan * scale - rec.width) / Number(cfg[8][0]);
   }
-	cvalue.x = rec.width + 80;
+	cvalue.x = rec.width + Number(cfg[41][0]);
 	if(cvalue.x < Number(cfg[40][0])) {
 		cvalue.x = Number(cfg[40][0]);
 	}
