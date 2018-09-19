@@ -191,21 +191,14 @@ function movie(event: Event): void {
 		lastid = bar1.id;
 	}
 
-  if(cfg[53][0]=="1"){ // 对数轴
-    if(maxfan < bar1.fan) {
-      maxr += (cfg[51][0] / Math.log(1+bar1.fan) - maxr) / cfg[7][0];
-      maxfan = bar1.fan;
-    } else {
-      maxr += (cfg[51][0] / Math.log(1+maxfan) - maxr) / cfg[7][0];
-    }
-  }else{
-  	if(maxfan < bar1.fan) {
-  		maxr += (cfg[51][0] / bar1.fan - maxr) / cfg[7][0]; // 加点缓冲
-  		maxfan = bar1.fan;
-  	} else {
-  		maxr += (cfg[51][0] / maxfan - maxr) / cfg[7][0];
-  	}
-  }
+
+	maxr += (cfg[51][0] / userfunc(bar1.fan, maxfan, cfg[53][0] == "1") - maxr) / Number(cfg[7][0]); // 加点缓冲
+	if(maxfan < bar1.fan) {
+		maxfan = bar1.fan;
+	} else {
+		maxfan += (bar1.fan - maxfan) * Number(cfg[54][0]); // 带缓冲地回缩
+	}
+
 
 	for(i = 0; i < RKcon.numChildren; i++) {
 		bar1 = RKcon.getChildAt(i) as rankBar;
@@ -238,6 +231,22 @@ function movie(event: Event): void {
 	}
 
 
+}
+
+
+
+function userfunc(fan: Number, maxf: Number, iflog: Boolean): Number {
+	var temp: Number;
+	if(maxf < fan) {
+		temp = bar1.fan;
+	} else {
+		temp = maxfan;
+	}
+	if(iflog) {
+		return(Math.log(1 + temp))
+	} else {
+		return(temp)
+	}
 }
 
 

@@ -15,7 +15,10 @@ function updatex(scale: Number): void {
   } else {
     this.x = val * scale; // scale 相对于除之后的值来计算
   }
-  if(this.x < cfg[50][0] && this.alpha > 0) {
+  if(this.x < Number(cfg[50][0]) && this.alpha > 0) {
     this.alpha -= 0.02;
+  }
+  if(this.x > Number(cfg[50][0]) && this.alpha < 1) {
+    this.alpha += 0.02;
   }
 }

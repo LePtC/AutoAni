@@ -107,14 +107,17 @@ function clearDelimeters(formattedString: String): String {
 
 function updatey(i: int, scale: Number): void {
 
-  if(cfg[53][0]=="1"){ // 对数轴
-    rec.width += (Math.log(1+fan) * scale - rec.width) / Number(cfg[8][0]);
-  }else{
-	  rec.width += (fan * scale - rec.width) / Number(cfg[8][0]);
-  }
+	if(cfg[53][0] == "1") { // 对数轴
+		rec.width += (Math.log(1 + fan) * scale - rec.width) / Number(cfg[8][0]);
+	} else {
+		rec.width += (fan * scale - rec.width) / Number(cfg[8][0]);
+	}
 	cvalue.x = rec.width + Number(cfg[41][0]);
 	if(cvalue.x < Number(cfg[40][0])) {
 		cvalue.x = Number(cfg[40][0]);
+	}
+	if(cvalue.x > Number(cfg[40][1])) {
+		cvalue.x = Number(cfg[40][1]);
 	}
 
 	if(fan >= Number(cfg[67][0])) {
@@ -134,7 +137,7 @@ function updatey(i: int, scale: Number): void {
 
 	} else {
 		rank1.text = "";
-    this.y += (Number(cfg[30][0]) - this.y) / Number(cfg[9][0]); // 往出生点消失
+		this.y += (Number(cfg[30][0]) - this.y) / Number(cfg[9][0]); // 往出生点消失
 	}
 
 	if(fan <= Number(cfg[67][0]) || (this.alpha > tarA + 0.05)) {
