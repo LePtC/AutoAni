@@ -129,7 +129,7 @@ Tcon.addChild(rect);
 
 var lastid: String; // 更新冠军头像
 var Icon: Sprite = new Sprite(); // 冠军头像容器
-addChildAt(Icon, 4);
+addChildAt(Icon, 0);
 
 
 
@@ -254,13 +254,31 @@ function userfunc(fan: Number, maxf: Number, iflog: Boolean): Number {
 function iconLoaded(e: Event): void {
 
 	var image: Bitmap = new Bitmap(e.target.content.bitmapData);
-	image.x = cfg[97][0];
-	image.y = cfg[98][0];
-	image.width = cfg[99][0];
-	image.height = cfg[100][0];
+	image.x = Number(cfg[97][0]);
+	image.y = Number(cfg[98][0]);
+  // image.width = cfg[99][0];
+  // image.height = cfg[100][0];
+  image.scaleX = Number(cfg[99][0])/image.width;
+  image.scaleY = image.scaleX;
+  image.alpha=0;
+  image.addEventListener(Event.ENTER_FRAME, fadein);
+
 	if(Icon.numChildren > 0) {
-		Icon.removeChildAt(0);
+    Icon.getChildAt(0).addEventListener(Event.ENTER_FRAME, fadeout);
 	}
 	Icon.addChild(image);
 
+}
+
+
+
+
+function fadein(event: Event): void {
+  if(event.target.alpha<Number(cfg[100][0])){ event.target.alpha+=0.02}
+  else{event.target.alpha=Number(cfg[100][0]);event.target.removeEventListener(Event.ENTER_FRAME, fadein);}
+}
+
+function fadeout(event: Event): void {
+  if(event.target.alpha>0){ event.target.alpha-=0.02}
+  else{event.target.alpha=0;event.target.removeEventListener(Event.ENTER_FRAME, fadeout);    Icon.removeChildAt(0);}
 }
