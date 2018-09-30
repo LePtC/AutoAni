@@ -165,21 +165,26 @@ function movie(event: Event): void {
 		}
 	}
 
-	// 冒泡排序法
-	for(i = 1; i < RKcon.numChildren; i++) {
-		bar1 = RKcon.getChildAt(i) as rankBar;
+  var RKmax = RKcon.numChildren-1;
+if(t%2==1){ // 每2帧更新次排序节省计算量…
+  // 冒泡排序法（反转，最大的放最上层
+  for(i = RKmax; i > 0; i--) {
+    bar1 = RKcon.getChildAt(i) as rankBar;
 
-		for(j = i - 1; j >= 0; j--) {
-			var bar2: rankBar = RKcon.getChildAt(j) as rankBar;
-			if(bar1.fan > bar2.fan) {
-				bar1.rank = j;
-			}
-		}
-		RKcon.setChildIndex(bar1, bar1.rank);
-	}
+    for(j = i + 1; j < RKmax; j++) {
+      var bar2: rankBar = RKcon.getChildAt(j) as rankBar;
+      if(bar1.fan > bar2.fan) {
+        bar1.rank = RKmax-j;
+      }else{
+        break;
+      }
+    }
+    RKcon.setChildIndex(bar1, RKmax-bar1.rank);
+  }
+}
 
 
-	bar1 = RKcon.getChildAt(0) as rankBar;
+	bar1 = RKcon.getChildAt(RKmax) as rankBar;
 	kuangmo.text = cfg[93][0] + bar1.cn;
 	shichang.text = cfg[94][0] + bar1.fan.toFixed(cfg[95][0]) + cfg[96][0];
 
@@ -200,11 +205,11 @@ function movie(event: Event): void {
 	}
 
 
-	for(i = 0; i < RKcon.numChildren; i++) {
-		bar1 = RKcon.getChildAt(i) as rankBar;
-		bar1.rank = i;
-		bar1.updatey(i, maxr); //bkggrid.scaleX
-	}
+  for(i = 0; i < RKcon.numChildren; i++) {
+    bar1 = RKcon.getChildAt(i) as rankBar;
+    bar1.rank = RKmax-i;
+    bar1.updatey(bar1.rank, maxr); //bkggrid.scaleX
+  }
 
 
 	for(i = 0; i < BKcon.numChildren; i++) {
@@ -217,7 +222,7 @@ function movie(event: Event): void {
 	yeart.x += Number(cfg[78][0]);
 	current.x = yeart.x + Number(cfg[79][0]);
 	if(t % int(cfg[81][0]) == 0) {
-		bar1 = RKcon.getChildAt(0) as rankBar;
+		bar1 = RKcon.getChildAt(RKmax) as rankBar;
 		rect.graphics.beginFill(bar1.col);
 		rect.graphics.drawRect(current.x - wid, current.y + 63, wid, cfg[82][0]);
 		rect.graphics.endFill();
