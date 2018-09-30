@@ -168,10 +168,10 @@ function movie(event: Event): void {
   var RKmax = RKcon.numChildren-1;
 if(t%2==1){ // 每2帧更新次排序节省计算量…
   // 冒泡排序法（反转，最大的放最上层
-  for(i = RKmax; i > 0; i--) {
+  for(i = RKmax; i >= 0; i--) {
     bar1 = RKcon.getChildAt(i) as rankBar;
 
-    for(j = i + 1; j < RKmax; j++) {
+    for(j = i + 1; j <= RKmax; j++) {
       var bar2: rankBar = RKcon.getChildAt(j) as rankBar;
       if(bar1.fan > bar2.fan) {
         bar1.rank = RKmax-j;
