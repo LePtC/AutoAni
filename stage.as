@@ -30,6 +30,11 @@ function cfgLoaded(evt: Event): void {
 		cfg[i] = cfg[i].split(",");
 	}
 
+  stage.color = cfg[2][0];
+  var icon: Loader = new Loader();
+  icon.contentLoaderInfo.addEventListener(Event.COMPLETE, bkgLoaded);
+  icon.load(new URLRequest(cfg[2][2]));
+
 	stage.frameRate = int(cfg[5][0]);
 	fp = cfg[6][0]; // 几帧过一个数据
 
@@ -53,7 +58,7 @@ function cfgLoaded(evt: Event): void {
 	tltext.y = cfg[59][0];
 	tltext.text = cfg[60][0];
 	var format1: TextFormat = new TextFormat();
-	format1.color = 0xFFFFFF;
+	format1.color = cfg[2][1];
 	format1.size = cfg[61][0];
 	tltext.setTextFormat(format1);
 
@@ -185,16 +190,6 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
 
 
 	bar1 = RKcon.getChildAt(RKmax) as rankBar;
-	kuangmo.text = cfg[93][0] + bar1.cn;
-	shichang.text = cfg[94][0] + bar1.fan.toFixed(cfg[95][0]) + cfg[96][0];
-
-	if(bar1.id != lastid) {
-
-		var icon: Loader = new Loader();
-		icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
-		icon.load(new URLRequest(bar1.id + pofix));
-		lastid = bar1.id;
-	}
 
 
 	maxr += (cfg[51][0] / userfunc(bar1.fan, maxfan, cfg[53][0] == "1") - maxr) / Number(cfg[7][0]); // 加点缓冲
@@ -218,11 +213,14 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
 	}
 
 
-	// 冠军条
-	yeart.x += Number(cfg[78][0]);
-	current.x = yeart.x + Number(cfg[79][0]);
-	if(t % int(cfg[81][0]) == 0) {
-		bar1 = RKcon.getChildAt(RKmax) as rankBar;
+
+	// 可选高亮第几名
+  bar1 = RKcon.getChildAt(RKmax-int(cfg[75][0]-1)) as rankBar;
+
+  // 冠军条
+  yeart.x += Number(cfg[78][0]);
+  current.x = yeart.x + Number(cfg[79][0]);
+  if(t % int(cfg[81][0]) == 0) {
 		rect.graphics.beginFill(bar1.col);
 		rect.graphics.drawRect(current.x - wid, current.y + 63, wid, cfg[82][0]);
 		rect.graphics.endFill();
@@ -236,6 +234,16 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
 	}
 
 
+  kuangmo.text = cfg[93][0] + bar1.cn;
+  shichang.text = cfg[94][0] + bar1.fan.toFixed(cfg[95][0]) + cfg[96][0];
+
+  if(bar1.id != lastid) {
+
+    var icon: Loader = new Loader();
+    icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
+    icon.load(new URLRequest(bar1.id + pofix));
+    lastid = bar1.id;
+  }
 }
 
 
@@ -287,3 +295,16 @@ function fadeout(event: Event): void {
   if(event.target.alpha>0){ event.target.alpha-=0.02}
   else{event.target.alpha=0;event.target.removeEventListener(Event.ENTER_FRAME, fadeout);    Icon.removeChildAt(0);}
 }
+
+
+
+var bkimage: Bitmap;
+function bkgLoaded(e: Event): void {
+
+  bkimage = new Bitmap(e.target.content.bitmapData);
+  bkimage.scaleX = 1920/bkimage.width;
+  bkimage.scaleY = bkimage.scaleX;
+  bkimage.alpha=cfg[2][3];
+  addChildAt(bkimage,0);
+}
+

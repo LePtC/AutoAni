@@ -14,6 +14,8 @@ var H: Number;
 
 var format1: TextFormat;
 
+var Icon: Sprite; // 头像容器
+
 function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: String, cfgi: Array): void {
 
 	cfg = cfgi;
@@ -27,7 +29,7 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 	rt = cfg[28][0] / 2;
 
 	format1 = new TextFormat();
-	format1.color = 0xFFFFFF;
+	format1.color = cfg[2][1];
 	format1.size = cfg[29][0];
 
 	this.y = Number(cfg[30][0]);
@@ -39,6 +41,8 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 	cname.text = cni;
 	cname.setTextFormat(format1);
 
+  Icon = new Sprite(); // 头像容器
+  addChildAt(Icon,2);
 
 	id = idi;
 	var icon: Loader = new Loader();
@@ -55,14 +59,27 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 
 
 
+
 function iconLoaded(e: Event): void {
 
 	var image: Bitmap = new Bitmap(e.target.content.bitmapData);
 	image.width = 2 * rt;
 	image.height = 2 * rt;
 	image.x = cfg[23][0] - rt;
-	image.y = 0;
-	addChildAt(image, 0);
+	image.y = cfg[23][1];
+	Icon.addChildAt(image, 0);
+
+if(cfg[31][0]=="1"){
+  // Create the mask graphic
+  var maskCircle: Sprite = new Sprite();
+  maskCircle.graphics.beginFill(0x000000);
+  maskCircle.graphics.drawEllipse(-rt, image.y, 2 * rt, 2 * rt);
+  maskCircle.graphics.endFill();
+  maskCircle.visible = false;
+  Icon.addChild(maskCircle);
+
+  image.mask = maskCircle; // Applies the mask
+}
 }
 
 
@@ -93,7 +110,7 @@ function update(po: Number): void {
 	cvalue.text = cfg[38][0] + fan.toFixed(int(cfg[37][0])).toString() + cfg[39][0];
 	cvalue.setTextFormat(format1);
 
-	rank1.text = (rank + 1).toString() + ".";
+	rank1.text = (rank + 1).toString() ; //+ "."
 	rank1.setTextFormat(format1);
 }
 
@@ -120,10 +137,16 @@ function updatey(i: int, scale: Number): void {
 		cvalue.x = Number(cfg[40][1]);
 	}
 
+  if(cfg[31][1]=="R"){Icon.x = rec.x+rec.width;}
+  if(cfg[25][1]=="R"){
+    cname.x = rec.width - (cname.textWidth + 10) + Number(cfg[25][2]);
+  }
+
+
 	if(fan >= Number(cfg[67][0])) {
 		var dist = Math.abs(i * H - this.y);
 		if(dist >= Number(cfg[10][0])) { // 变速
-			this.y += (i * H - this.y) / Number(cfg[9][0]);
+			this.y += (i * H - this.y) / Number(cfg[11][0]);
 		} else if(dist >= Number(cfg[12][0])) { // 匀速
 			if(this.y < i * H) {
 				this.y += Number(cfg[11][0]);
@@ -137,7 +160,7 @@ function updatey(i: int, scale: Number): void {
 
 	} else {
 		rank1.text = "";
-		this.y += (Number(cfg[30][0]) - this.y) / Number(cfg[9][0]); // 往出生点消失
+		this.y += (Number(cfg[30][0]) - this.y) / Number(cfg[11][0]); // 往出生点消失
 	}
 
 	if(fan <= Number(cfg[67][0]) || (this.alpha > tarA + 0.05)) {
