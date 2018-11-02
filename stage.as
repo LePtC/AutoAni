@@ -121,7 +121,7 @@ var tres: int = 0;
 var bar1: rankBar;
 var bar2: rankBar;
 
-var po: Number; // population
+var po: Number=0.0001; // population
 
 var maxr: Number; // 计算缩放率用
 var maxfan: Number; // 只缩不放
@@ -145,7 +145,7 @@ function movie(event: Event): void {
 	if(t == 0) {
 		maxr = 0;
 		maxfan = 0;
-		lastid = "2"
+		lastid = "2";
 	} // 解决某个 as 的 bug
 
 	if(t < da.length * fp) {
@@ -165,7 +165,13 @@ function movie(event: Event): void {
 		rk = RKcon.getChildAt(i) as rankBar;
 		j = rk.n;
 		if(T < da.length - 1) {
-			po = (da[T][j] * (fp - tres) + da[T + 1][j] * tres) / fp; // 线性补间
+      if(cfg[13][0]=="2"){ // 关掉线性补间，使用变速缓冲
+        po = rk.po + (da[T][j]-rk.po)/Number(cfg[8][0]);
+      }else if(cfg[13][0]=="3"){
+        po = rk.po + (da[T+1][j]-rk.po)/Number(cfg[8][0]);
+      }else{
+        po = da[T][j] * (1 - tres/fp) + da[T + 1][j] * tres/fp; // 线性补间
+      }
 			rk.update(po);
 		}
 	}
@@ -287,12 +293,12 @@ function iconLoaded(e: Event): void {
 
 
 function fadein(event: Event): void {
-  if(event.target.alpha<Number(cfg[100][0])){ event.target.alpha+=0.02}
+  if(event.target.alpha<Number(cfg[100][0])){ event.target.alpha+=Number(cfg[101][0])}
   else{event.target.alpha=Number(cfg[100][0]);event.target.removeEventListener(Event.ENTER_FRAME, fadein);}
 }
 
 function fadeout(event: Event): void {
-  if(event.target.alpha>0){ event.target.alpha-=0.02}
+  if(event.target.alpha>0){ event.target.alpha-=Number(cfg[101][0])}
   else{event.target.alpha=0;event.target.removeEventListener(Event.ENTER_FRAME, fadeout);    Icon.removeChildAt(0);}
 }
 

@@ -1,5 +1,6 @@
 ﻿import flash.display.*;
 
+var colbar: Array;
 var cfg: Array;
 
 
@@ -51,10 +52,13 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 
 
 	col = coli;
-	var newColorTransform: ColorTransform = rec.transform.colorTransform;
-	newColorTransform.color = col;
-	rec.transform.colorTransform = newColorTransform;
-
+  if(cfg[32][0]=="1"){
+      include "colbar.as"; // 按增速变色
+    }else{
+      var newColorTransform: ColorTransform = rec.transform.colorTransform;
+      newColorTransform.color = col;
+      rec.transform.colorTransform = newColorTransform;
+    }
 }
 
 
@@ -87,14 +91,16 @@ if(cfg[31][0]=="1"){
 var rank: int; // 要去往的排名
 rank1.text = "";
 
+var po: Number = 0;
 var fan: Number = 0;
 var fanlast: Number = 0;
 var news: int = 60; // 最近有更新的话，给30帧高亮时间
 var tarA: Number; // 最近有更新的目标alpha1，否则半透明
 
 
-function update(po: Number): void {
+function update(poi: Number): void {
 
+  po = poi;
 	fan = po / cfg[36][0];
 
 	if(fan - fanlast > Number(cfg[68][0])) {
@@ -112,6 +118,12 @@ function update(po: Number): void {
 
 	rank1.text = (rank + 1).toString() ; //+ "."
 	rank1.setTextFormat(format1);
+
+  if(cfg[32][0]=="1"){
+    var newColorTransform: ColorTransform = rec.transform.colorTransform;
+    newColorTransform.color = colbar[colfun(poi)];
+    rec.transform.colorTransform = newColorTransform;
+  }
 }
 
 
@@ -176,3 +188,15 @@ function updatey(i: int, scale: Number): void {
 
 var pstart: int; // 拥有用户的层号起点
 var pnum: int; // 拥有用户数量
+
+
+
+function colfun(speed: Number): int {
+  if(speed <= 0) {
+    return(0)
+  }
+  if(speed >= 50000) {
+    return(100)
+  }
+  return(int(Math.pow(speed / 50000, 1 / 6) * 100))
+}
