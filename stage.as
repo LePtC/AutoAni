@@ -124,7 +124,8 @@ var bar2: rankBar;
 var po: Number=0.0001; // population
 
 var maxr: Number; // 计算缩放率用
-var maxfan: Number; // 只缩不放
+var maxfan: Number; // 只缩不放用
+var absmaxr:Number; // 兼容负数据用
 
 var Tcon: Sprite = new Sprite(); // 冠军条容器
 addChildAt(Tcon, 3);
@@ -143,7 +144,8 @@ addChildAt(Icon, 0);
 function movie(event: Event): void {
 
 	if(t == 0) {
-		maxr = 0;
+    maxr = 0;
+		absmaxr = 0;
 		maxfan = 0;
 		lastid = "2";
 	} // 解决某个 as 的 bug
@@ -160,6 +162,13 @@ function movie(event: Event): void {
 		if(T < da.length) {
 			yeart.text = da[T][0];
 		}
+    if(T < da.length - 1) {
+      if(cfg[14][0]=="1"){
+        for(j=1; j<da[T].length; j++){
+          da[T+1][j]=Number(da[T+1][j])+Number(da[T][j])
+        }
+      } // 将数据替换成一阶积分
+    }
 	}
 	for(i = 0; i < RKcon.numChildren; i++) {
 		rk = RKcon.getChildAt(i) as rankBar;
@@ -195,27 +204,29 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
 }
 
 
-	bar1 = RKcon.getChildAt(RKmax) as rankBar;
+  // 可选宽度跟随第几名
+	bar1 = RKcon.getChildAt(RKmax-int(cfg[75][1]-1)) as rankBar;
 
-
-	maxr += (cfg[51][0] / userfunc(bar1.fan, maxfan, cfg[53][0] == "1") - maxr) / Number(cfg[7][0]); // 加点缓冲
-	if(maxfan < bar1.fan) {
+	maxr += (Number(cfg[51][0]) / userfunc(bar1.fan, maxfan, cfg[53][0] == "1") - maxr) / Number(cfg[7][0]); // 加点缓冲
+	if(Math.abs(maxfan) < Math.abs(bar1.fan)) {
 		maxfan = bar1.fan;
 	} else {
 		maxfan += (bar1.fan - maxfan) * Number(cfg[54][0]); // 带缓冲地回缩
 	}
 
 
+  absmaxr = Math.abs(maxr);
+
   for(i = 0; i < RKcon.numChildren; i++) {
     bar1 = RKcon.getChildAt(i) as rankBar;
     bar1.rank = RKmax-i;
-    bar1.updatey(bar1.rank, maxr); //bkggrid.scaleX
+    bar1.updatey(bar1.rank, absmaxr); //bkggrid.scaleX
   }
 
 
 	for(i = 0; i < BKcon.numChildren; i++) {
 		bk = BKcon.getChildAt(i) as bkgL;
-		bk.updatex(maxr);
+		bk.updatex(absmaxr);
 	}
 
 
@@ -256,10 +267,10 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
 
 function userfunc(fan: Number, maxf: Number, iflog: Boolean): Number {
 	var temp: Number;
-	if(maxf < fan) {
-		temp = bar1.fan;
+	if(Math.abs(maxf) < Math.abs(fan)) {
+		temp = fan;
 	} else {
-		temp = maxfan;
+		temp = maxf;
 	}
 	if(iflog) {
 		return(Math.log(1 + temp))
@@ -285,6 +296,19 @@ function iconLoaded(e: Event): void {
 	if(Icon.numChildren > 0) {
     Icon.getChildAt(0).addEventListener(Event.ENTER_FRAME, fadeout);
 	}
+
+
+if(cfg[99][1]=="1"){ // 裁圆形
+  var maskCircle: Sprite = new Sprite();
+  maskCircle.graphics.beginFill(0x000000);
+  maskCircle.graphics.drawEllipse(image.x, image.y, image.width, image.width);
+  maskCircle.graphics.endFill();
+  maskCircle.visible = false;
+  Icon.addChild(maskCircle);
+
+  image.mask = maskCircle;
+}
+
 	Icon.addChild(image);
 
 }
@@ -314,3 +338,30 @@ function bkgLoaded(e: Event): void {
   addChildAt(bkimage,0);
 }
 
+
+
+
+addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+function keyPressed(event: KeyboardEvent): void {
+
+  if(event.keyCode == Keyboard.SPACE) {
+    if(stage.frameRate <= 1){
+      stage.frameRate = int(cfg[5][0]);
+    }else{
+      stage.frameRate = 0;
+    }
+  }
+  // 方向键控制柱子移动
+  if(event.keyCode == Keyboard.RIGHT) {
+    RKcon.x+=2;
+  }
+  if(event.keyCode == Keyboard.LEFT) {
+    RKcon.x-=2;
+  }
+  if(event.keyCode == Keyboard.UP) {
+    RKcon.y-=2;
+  }
+  if(event.keyCode == Keyboard.DOWN) {
+    RKcon.y+=2;
+  }
+}

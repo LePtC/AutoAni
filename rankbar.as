@@ -45,7 +45,7 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
   Icon = new Sprite(); // 头像容器
   addChildAt(Icon,2);
 
-	id = idi;
+	id = clearDelimeters(idi);
 	var icon: Loader = new Loader();
 	icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
 	icon.load(new URLRequest(id + pofix));
@@ -69,15 +69,15 @@ function iconLoaded(e: Event): void {
 	var image: Bitmap = new Bitmap(e.target.content.bitmapData);
 	image.width = 2 * rt;
 	image.height = 2 * rt;
-	image.x = cfg[23][0] - rt;
-	image.y = cfg[23][1];
+	image.x = Number(cfg[23][0]) - rt;
+	image.y = Number(cfg[23][1]);
 	Icon.addChildAt(image, 0);
 
 if(cfg[31][0]=="1"){
   // Create the mask graphic
   var maskCircle: Sprite = new Sprite();
   maskCircle.graphics.beginFill(0x000000);
-  maskCircle.graphics.drawEllipse(-rt, image.y, 2 * rt, 2 * rt);
+  maskCircle.graphics.drawEllipse(image.x, image.y, 2 * rt, 2 * rt);
   maskCircle.graphics.endFill();
   maskCircle.visible = false;
   Icon.addChild(maskCircle);
@@ -133,14 +133,17 @@ function clearDelimeters(formattedString: String): String {
 }
 
 // 位置和柱长都采用“固定比例赶往目标值”算法
-
+var targ:Number;
 function updatey(i: int, scale: Number): void {
 
 	if(cfg[53][0] == "1") { // 对数轴
-		rec.width += (Math.log(1 + fan) * scale - rec.width) / Number(cfg[8][0]);
+		targ = Math.log(1 + fan) * scale;
 	} else {
-		rec.width += (fan * scale - rec.width) / Number(cfg[8][0]);
+		targ = fan * scale;
 	}
+
+  rec.width += (Math.abs(targ) - rec.width) / Number(cfg[8][0]);
+
 	cvalue.x = rec.width + Number(cfg[41][0]);
 	if(cvalue.x < Number(cfg[40][0])) {
 		cvalue.x = Number(cfg[40][0]);
@@ -155,7 +158,7 @@ function updatey(i: int, scale: Number): void {
   }
 
 
-	if(fan >= Number(cfg[67][0])) {
+	if(Math.abs(fan) >= Number(cfg[67][0])) {
 		var dist = Math.abs(i * H - this.y);
 		if(dist >= Number(cfg[10][0])) { // 变速
 			this.y += (i * H - this.y) / Number(cfg[11][0]);
@@ -175,7 +178,7 @@ function updatey(i: int, scale: Number): void {
 		this.y += (Number(cfg[30][0]) - this.y) / Number(cfg[11][0]); // 往出生点消失
 	}
 
-	if(fan <= Number(cfg[67][0]) || (this.alpha > tarA + 0.05)) {
+	if(Math.abs(fan) <= Number(cfg[67][0]) || (this.alpha > tarA + 0.05)) {
 		this.alpha -= 0.05;
 	} else if(this.alpha < tarA - 0.05) {
 		this.alpha += 0.05;
