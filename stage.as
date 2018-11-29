@@ -96,6 +96,16 @@ function dataLoaded(evt: Event): void {
 		da[i] = da[i].split(",");
 	}
 
+  // 从第3行第1列开始过滤非数字
+  for(i = 3; i < da.length; i++) {
+    for(j = 1; j < da[i].length; j++){
+      da[i][j] = Number(da[i][j]);
+      if(isNaN(da[i][j])){
+        da[i][j]=0;
+      }
+    }
+  }
+
 	pofix = da[0][0];
 	Num = da[1].length - 1; // 计算条目数
 
