@@ -161,7 +161,7 @@ function updatey(i: int, scale: Number): void {
 	if(Math.abs(fan) >= Number(cfg[67][0])) {
 		var dist = Math.abs(i * H - this.y);
 		if(dist >= Number(cfg[10][0])) { // 变速
-			this.y += (i * H - this.y) / Number(cfg[11][0]);
+			this.y += (i * H - this.y) / Number(cfg[9][0]);
 		} else if(dist >= Number(cfg[12][0])) { // 匀速
 			if(this.y < i * H) {
 				this.y += Number(cfg[11][0]);
