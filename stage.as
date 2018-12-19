@@ -154,11 +154,14 @@ addChildAt(Icon, 0);
 function movie(event: Event): void {
 
 	if(t == 0) {
+    // 解决某个 as 的 bug
     maxr = 0;
-		absmaxr = 0;
-		maxfan = 0;
-		lastid = "2";
-	} // 解决某个 as 的 bug
+    absmaxr = 0;
+    maxfan = 0;
+    lastid = "2";
+
+    stage.frameRate = 0; // 启动时暂停
+  }
 
 	if(t < da.length * fp) {
 		t++;
@@ -264,7 +267,7 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
   kuangmo.text = cfg[93][0] + bar1.cn;
   shichang.text = cfg[94][0] + bar1.fan.toFixed(cfg[95][0]) + cfg[96][0];
 
-  if(bar1.id != lastid) {
+  if(bar1.id != lastid || t == 1) { // 启动时冠军头像多检查一次更新
 
     var icon: Loader = new Loader();
     icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
