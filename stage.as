@@ -353,6 +353,7 @@ function bkgLoaded(e: Event): void {
 
 
 
+var fadeupy:Number = 0;
 
 addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 function keyPressed(event: KeyboardEvent): void {
@@ -372,9 +373,24 @@ function keyPressed(event: KeyboardEvent): void {
     RKcon.x-=2;
   }
   if(event.keyCode == Keyboard.UP) {
-    RKcon.y-=2;
+    fadeupy = RKcon.y - Number(cfg[15][0]);
+    RKcon.addEventListener(Event.ENTER_FRAME, fadeup);
   }
   if(event.keyCode == Keyboard.DOWN) {
-    RKcon.y+=2;
+    fadeupy = RKcon.y + Number(cfg[15][0]);
+    RKcon.addEventListener(Event.ENTER_FRAME, fadeup);
   }
 }
+
+
+
+function fadeup(event: Event): void {
+
+  RKcon.y -= (RKcon.y-fadeupy)/Number(cfg[15][1]);
+
+  if(Math.abs(RKcon.y-fadeupy)<1){
+    RKcon.y = fadeupy;
+    event.target.removeEventListener(Event.ENTER_FRAME, fadeup);
+  }
+}
+

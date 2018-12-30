@@ -23,6 +23,8 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 
 	rank1.x = cfg[22][0];
 	rec.x = cfg[24][0];
+  rec.y = cfg[24][1];
+  cvalue.y = cfg[24][1];
 	cname.x = cfg[25][0];
 	H = cfg[26][0];
 	rec.height = cfg[27][0];
