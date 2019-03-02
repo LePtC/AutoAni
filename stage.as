@@ -160,7 +160,7 @@ function movie(event: Event): void {
     maxfan = 0;
     lastid = "2";
 
-    stage.frameRate = 0; // 启动时暂停
+    //stage.frameRate = 0; // 启动时暂停
   }
 
 	if(t < da.length * fp) {
