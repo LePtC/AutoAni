@@ -21,10 +21,11 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 
 	cfg = cfgi;
 
-	rank1.x = cfg[22][0];
+  rank1.x = cfg[22][0];
+	rank1.y = cfg[22][1];
 	rec.x = cfg[24][0];
   rec.y = cfg[24][1];
-  cvalue.y = cfg[24][1];
+  cvalue.y = cfg[41][1];
 	cname.x = cfg[25][0];
 	H = cfg[26][0];
 	rec.height = cfg[27][0];
@@ -85,6 +86,16 @@ if(cfg[31][0]=="1"){
   Icon.addChild(maskCircle);
 
   image.mask = maskCircle; // Applies the mask
+}
+
+if(id==cfg[110][0]){
+  var hi:High = new High();
+  hi.width=image.width*cfg[111][0];
+  hi.scaleY=hi.scaleX
+  hi.x=image.x+rt;
+  hi.y=image.y+rt;
+  hi.alpha=cfg[112][0];
+  this.addChild(hi);
 }
 }
 

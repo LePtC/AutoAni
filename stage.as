@@ -64,9 +64,9 @@ function cfgLoaded(evt: Event): void {
 
 	yeart.x = cfg[76][0];
 	yeart.y = cfg[77][0];
-	current.x = yeart.x + Number(cfg[79][0]);
-	current.y = cfg[80][0];
-	wid = cfg[78][0] * cfg[81][0];
+  current.x = Number(cfg[79][0]); //yeart.x +
+  current.y = Number(cfg[80][0]);
+	wid = cfg[78][1] * cfg[81][0];
 
 	kuangmo.x = cfg[91][0];
 	kuangmo.y = cfg[92][0];
@@ -199,7 +199,7 @@ function movie(event: Event): void {
 	}
 
   var RKmax = RKcon.numChildren-1;
-if(t%2==1){ // 每2帧更新次排序节省计算量…
+if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
   // 冒泡排序法（反转，最大的放最上层
   for(i = RKmax; i >= 0; i--) {
     bar1 = RKcon.getChildAt(i) as rankBar;
@@ -249,10 +249,12 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
 
   // 冠军条
   yeart.x += Number(cfg[78][0]);
-  current.x = yeart.x + Number(cfg[79][0]);
+  current.x += Number(cfg[78][1]);
+  Tcon.x -= Number(cfg[78][2]);
   if(t % int(cfg[81][0]) == 0) {
 		rect.graphics.beginFill(bar1.col);
-		rect.graphics.drawRect(current.x - wid, current.y + 63, wid, cfg[82][0]);
+		// rect.graphics.drawRect(current.x - wid, current.y + 63, wid, cfg[82][0]);
+    rect.graphics.drawRect(current.x - wid, current.y + 75-userheight(bar1), wid, userheight(bar1));
 		rect.graphics.endFill();
 	}
 	if(t % fp == 0 && da[T][0].slice(int(cfg[84][0]), int(cfg[84][1])) == cfg[84][2]) {
@@ -267,14 +269,34 @@ if(t%2==1){ // 每2帧更新次排序节省计算量…
   kuangmo.text = cfg[93][0] + bar1.cn;
   shichang.text = cfg[94][0] + bar1.fan.toFixed(cfg[95][0]) + cfg[96][0];
 
-  if(bar1.id != lastid || t == 1) { // 启动时冠军头像多检查一次更新
 
+  if(t == 1) { // 启动时冠军头像多检查一次更新
     var icon: Loader = new Loader();
     icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
     icon.load(new URLRequest(bar1.id + pofix));
     lastid = bar1.id;
   }
+
+  if(bar1.id != lastid && t > 2) {
+
+    var icon: Loader = new Loader();
+    icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
+    icon.load(new URLRequest(bar1.id + pofix));
+
+    curbub = new CurBub();
+    curbub.loadp(bar1.id + pofix);
+    curbub.x=current.x-15;
+    curbub.y=current.y+75-15;
+    Tcon.addChild(curbub);
+
+    lastid = bar1.id;
+  }else{
+    curbub.x += Number(cfg[78][1])/2;
+  }
 }
+
+var curbub: CurBub;
+
 
 
 
@@ -292,6 +314,17 @@ function userfunc(fan: Number, maxf: Number, iflog: Boolean): Number {
 	}
 }
 
+
+
+function userheight(bar1:rankBar):Number{
+  if(cfg[82][0]=="A"){
+    return(bar1.fan/Number(cfg[82][1]))
+  }else if(cfg[82][0]=="D"){
+    return((Number(da[T+int(cfg[82][2])][bar1.n])-Number(da[T][bar1.n]))/Number(cfg[82][1]))
+  }else{
+    return(Number(cfg[82][0]))
+  }
+}
 
 
 function iconLoaded(e: Event): void {
