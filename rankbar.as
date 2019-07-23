@@ -62,6 +62,8 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
       newColorTransform.color = col;
       rec.transform.colorTransform = newColorTransform;
     }
+
+  water.text = cfg[118][0];
 }
 
 
@@ -164,6 +166,10 @@ function updatey(i: int, scale: Number): void {
 	if(cvalue.x > Number(cfg[40][1])) {
 		cvalue.x = Number(cfg[40][1]);
 	}
+
+  water.x = cvalue.x + Number(cfg[119][0]);
+  water.y = cvalue.y + Number(cfg[119][1]);
+  water.alpha = Number(cfg[120][0]);
 
   if(cfg[31][1]=="R"){Icon.x = rec.x+rec.width;}
   if(cfg[25][1]=="R"){
