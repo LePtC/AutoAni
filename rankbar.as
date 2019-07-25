@@ -17,6 +17,12 @@ var format1: TextFormat;
 
 var Icon: Sprite; // 头像容器
 
+
+var alphaTar:Number=1;
+var xTar:Number=0;
+var scaTar:Number=1;
+var rotTar:Number=0;
+
 function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: String, cfgi: Array): void {
 
 	cfg = cfgi;
@@ -63,7 +69,11 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
       rec.transform.colorTransform = newColorTransform;
     }
 
-  water.text = cfg[118][0];
+  water.y = cvalue.y + Number(cfg[119][1]);
+  alphaTar = 1;
+  xTar = 0;
+  scaTar = 1;
+  rotTar = 0;
 }
 
 
@@ -167,9 +177,12 @@ function updatey(i: int, scale: Number): void {
 		cvalue.x = Number(cfg[40][1]);
 	}
 
-  water.x = cvalue.x + Number(cfg[119][0]);
-  water.y = cvalue.y + Number(cfg[119][1]);
-  water.alpha = Number(cfg[120][0]);
+  water.text = cfg[118][int(rank % int(cfg[118].length))];
+  water.x += (xTar-water.x)/Number(cfg[124][0]);
+  water.alpha += (alphaTar-water.alpha)/Number(cfg[124][0]);
+  water.scaleX += (scaTar-water.scaleX)/Number(cfg[124][0]);
+  water.scaleY = water.scaleX;
+  water.rotation += (rotTar-water.rotation)/Number(cfg[124][0]);
 
   if(cfg[31][1]=="R"){Icon.x = rec.x+rec.width;}
   if(cfg[25][1]=="R"){
@@ -208,6 +221,8 @@ function updatey(i: int, scale: Number): void {
 
 
 
+
+
 var pstart: int; // 拥有用户的层号起点
 var pnum: int; // 拥有用户数量
 
@@ -221,4 +236,20 @@ function colfun(speed: Number): int {
     return(100)
   }
   return(int(Math.pow(speed / 50000, 1 / 6) * 100))
+}
+
+
+
+
+function updateWater(): void {
+  alphaTar = Number(cfg[120][0])+(Number(cfg[120][1])-Number(cfg[120][0]))*Math.pow(Math.random(),int(cfg[120][2]));
+  if(cfg[121][1]=="0"){
+    xTar = Number(cfg[121][0])+(cvalue.x + Number(cfg[119][0])-Number(cfg[121][0]))*Math.random();
+    }else{
+      xTar = Number(cfg[121][0])+(Number(cfg[121][1])-Number(cfg[121][0]))*Math.random();
+    }
+
+  scaTar = Number(cfg[122][0])+(Number(cfg[122][1])-Number(cfg[122][0]))*Math.random();
+  trace("scaTar="+scaTar+"，scaleX="+water.scaleX);
+  rotTar = Number(cfg[123][0])+(Number(cfg[123][1])-Number(cfg[123][0]))*Math.random();
 }

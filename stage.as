@@ -8,6 +8,10 @@ import flash.events.*;
 import flash.net.*;
 
 
+//var loadfont: URLLoader = new URLLoader();
+//loadfont.load(new URLRequest("双字体.swf"));
+
+
 var loadcfg: URLLoader = new URLLoader();
 loadcfg.dataFormat = URLLoaderDataFormat.TEXT;
 loadcfg.addEventListener(Event.COMPLETE, cfgLoaded);
@@ -150,6 +154,7 @@ addChildAt(Icon, 0);
 
 
 
+var curbub:CurBub = new CurBub(); //当前冠军
 
 function movie(event: Event): void {
 
@@ -199,6 +204,14 @@ function movie(event: Event): void {
 	}
 
   var RKmax = RKcon.numChildren-1;
+
+if(t%int(cfg[125][0])==1){ // 自定义每几帧更新次水印
+  for(i = RKmax; i >= 0; i--) {
+    bar1 = RKcon.getChildAt(i) as rankBar;
+    bar1.updateWater();
+  }
+}
+
 if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
   // 冒泡排序法（反转，最大的放最上层
   for(i = RKmax; i >= 0; i--) {
@@ -294,8 +307,6 @@ if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
     curbub.x += Number(cfg[78][1])/2;
   }
 }
-
-var curbub: CurBub;
 
 
 
