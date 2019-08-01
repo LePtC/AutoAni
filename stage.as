@@ -115,7 +115,7 @@ function dataLoaded(evt: Event): void {
 
 	for(i = 0; i < Num; i++) {
 		rk = new rankBar();
-		rk.initialize(i + 1, da[0][i + 1], da[1][i + 1], da[2][i + 1], pofix, cfg);
+		rk.initialize(i + 1, da[0][i + 1], da[1][i + 1], da[2][i + 1], pofix, cfg, da[3][i + 1]);
 		RKcon.addChildAt(rk, i);
 	}
 	stage.addEventListener(Event.ENTER_FRAME, movie);
@@ -292,9 +292,9 @@ if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
 
   if(bar1.id != lastid && t > 2) {
 
-    var icon: Loader = new Loader();
-    icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
-    icon.load(new URLRequest(bar1.id + pofix));
+    var icon2: Loader = new Loader();
+    icon2.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
+    icon2.load(new URLRequest(bar1.id + pofix));
 
     curbub = new CurBub();
     curbub.loadp(bar1.id + pofix);

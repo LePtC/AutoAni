@@ -23,7 +23,9 @@ var xTar:Number=0;
 var scaTar:Number=1;
 var rotTar:Number=0;
 
-function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: String, cfgi: Array): void {
+var recfirst:Number;
+
+function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: String, cfgi: Array, firsti:Number): void {
 
 	cfg = cfgi;
 
@@ -62,20 +64,31 @@ function initialize(ni: int, idi: String, cni: String, coli: Number, pofix: Stri
 
 	col = coli;
   if(cfg[32][0]=="1"){
-      include "colbar.as"; // 按增速变色
-    }else{
-      var newColorTransform: ColorTransform = rec.transform.colorTransform;
-      newColorTransform.color = col;
-      rec.transform.colorTransform = newColorTransform;
-    }
+    include "colbar.as"; // 按增速变色
+  }else{
+    var newColorTransform: ColorTransform = rec.transform.colorTransform;
+    newColorTransform.color = col;
+    rec.transform.colorTransform = newColorTransform;
+  }
 
-  water.y = cvalue.y + Number(cfg[119][1]);
+  wat.water.y = cvalue.y + Number(cfg[119][1]);
   alphaTar = 1;
   xTar = 0;
   scaTar = 1;
   rotTar = 0;
-}
+  fanlast = 0;
 
+  recfirst=firsti;
+  if(cfg[33][0]!="0"){
+    recini.x = rec.x;
+    recini.y = rec.y;
+    recini.height = cfg[33][0];
+    recini.alpha = Number(cfg[33][1]);
+  }else{
+    recini.visible=false;
+  }
+  trace(cni+recfirst);
+}
 
 
 
@@ -127,28 +140,41 @@ function update(poi: Number): void {
 
   po = poi;
 	fan = po / cfg[36][0];
+  var temp:Number = fan - fanlast;
 
-	if(fan - fanlast > Number(cfg[68][0])) {
+	if(temp > Number(cfg[68][0])) {
 		this.alpha = 1;
 		news = cfg[69][0];
 	} else if(news > Number(cfg[70][0])) {
 		news--;
 	}
+
+  if(cfg[32][0]=="1"){
+    temp = poi;
+  }
+  if(cfg[32][0]=="1"||cfg[32][0]=="2"){
+    var newColorTransform: ColorTransform = rec.transform.colorTransform;
+    newColorTransform.color = colbar[colfun(temp)];
+    rec.transform.colorTransform = newColorTransform;
+  }
+
+
 	fanlast = fan;
 	tarA = news / cfg[69][0];
 
 
 	cvalue.text = cfg[38][0] + fan.toFixed(int(cfg[37][0])).toString() + cfg[39][0];
+  if(fan>=recfirst){
+    cvalue.text+="（▲ "+((fan/recfirst-1)*100).toFixed(1).toString()+"%）";
+  }else{
+    cvalue.text+="（▼ "+(-(fan/recfirst-1)*100).toFixed(1).toString()+"%）";
+  }
+
 	cvalue.setTextFormat(format1);
 
 	rank1.text = (rank + 1).toString() ; //+ "."
 	rank1.setTextFormat(format1);
 
-  if(cfg[32][0]=="1"){
-    var newColorTransform: ColorTransform = rec.transform.colorTransform;
-    newColorTransform.color = colbar[colfun(poi)];
-    rec.transform.colorTransform = newColorTransform;
-  }
 }
 
 
@@ -159,15 +185,19 @@ function clearDelimeters(formattedString: String): String {
 
 // 位置和柱长都采用“固定比例赶往目标值”算法
 var targ:Number;
+var targini:Number;
 function updatey(i: int, scale: Number): void {
 
 	if(cfg[53][0] == "1") { // 对数轴
 		targ = Math.log(1 + fan) * scale;
+    targini = Math.log(1 + recfirst) * scale;
 	} else {
 		targ = fan * scale;
+    targini = recfirst * scale;
 	}
 
   rec.width += (Math.abs(targ) - rec.width) / Number(cfg[8][0]);
+  recini.width += (Math.abs(targini) - recini.width) / Number(cfg[8][0]);
 
 	cvalue.x = rec.width + Number(cfg[41][0]);
 	if(cvalue.x < Number(cfg[40][0])) {
@@ -177,12 +207,12 @@ function updatey(i: int, scale: Number): void {
 		cvalue.x = Number(cfg[40][1]);
 	}
 
-  water.text = cfg[118][int(rank % int(cfg[118].length))];
-  water.x += (xTar-water.x)/Number(cfg[124][0]);
-  water.alpha += (alphaTar-water.alpha)/Number(cfg[124][0]);
-  water.scaleX += (scaTar-water.scaleX)/Number(cfg[124][0]);
-  water.scaleY = water.scaleX;
-  water.rotation += (rotTar-water.rotation)/Number(cfg[124][0]);
+  wat.water.text = cfg[118][int(rank % int(cfg[118].length))];
+  wat.water.x += (xTar-wat.water.x)/Number(cfg[124][0]);
+  wat.water.alpha += (alphaTar-wat.water.alpha)/Number(cfg[124][0]);
+  wat.water.scaleX += (scaTar-wat.water.scaleX)/Number(cfg[124][0]);
+  wat.water.scaleY = wat.water.scaleX;
+  wat.water.rotation += (rotTar-wat.water.rotation)/Number(cfg[124][0]);
 
   if(cfg[31][1]=="R"){Icon.x = rec.x+rec.width;}
   if(cfg[25][1]=="R"){
@@ -229,13 +259,16 @@ var pnum: int; // 拥有用户数量
 
 
 function colfun(speed: Number): int {
+  if(isNaN(speed)){
+    return(1)
+  }
   if(speed <= 0) {
     return(0)
   }
-  if(speed >= 50000) {
+  if(speed >= Number(cfg[32][1])) {
     return(100)
   }
-  return(int(Math.pow(speed / 50000, 1 / 6) * 100))
+  return(int(Math.pow(speed / Number(cfg[32][1]), 1 / 6) * 100))
 }
 
 
@@ -250,6 +283,5 @@ function updateWater(): void {
     }
 
   scaTar = Number(cfg[122][0])+(Number(cfg[122][1])-Number(cfg[122][0]))*Math.random();
-  trace("scaTar="+scaTar+"，scaleX="+water.scaleX);
   rotTar = Number(cfg[123][0])+(Number(cfg[123][1])-Number(cfg[123][0]))*Math.random();
 }
