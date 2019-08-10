@@ -117,6 +117,9 @@
   - 显示涨跌（写源码里了暂不能config）
 - 2019.08.01 v0.9.3 bug fix
   - 修正键控上下移动距离config
+- 2019.08.03 v0.9.3
+  - 可以减少水印数量以改善性能
+  - 修高亮环不跟随图标去右侧的bug
 
 
 对研究原工程感兴趣的可移步 Flash 可视化项目 [FlashAni](https://github.com/LePtC/FlashAni)
