@@ -115,7 +115,7 @@ function dataLoaded(evt: Event): void {
 
 	for(i = 0; i < Num; i++) {
 		rk = new rankBar();
-		rk.initialize(i + 1, da[0][i + 1], da[1][i + 1], da[2][i + 1], pofix, cfg);
+		rk.initialize(i + 1, da[0][i + 1], da[1][i + 1], da[2][i + 1], pofix, cfg, da[3][i + 1]);
 		RKcon.addChildAt(rk, i);
 	}
 	stage.addEventListener(Event.ENTER_FRAME, movie);
@@ -212,6 +212,8 @@ if(t%int(cfg[125][0])==1){ // 自定义每几帧更新次水印
   }
 }
 
+
+if(!isNaN(cfg[15][0])){
 if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
   // 冒泡排序法（反转，最大的放最上层
   for(i = RKmax; i >= 0; i--) {
@@ -228,7 +230,7 @@ if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
     RKcon.setChildIndex(bar1, RKmax-bar1.rank);
   }
 }
-
+}
 
   // 可选宽度跟随第几名
 	bar1 = RKcon.getChildAt(RKmax-int(cfg[75][1]-1)) as rankBar;
@@ -283,7 +285,7 @@ if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
   shichang.text = cfg[94][0] + bar1.fan.toFixed(cfg[95][0]) + cfg[96][0];
 
 
-  if(t == 1) { // 启动时冠军头像多检查一次更新
+  if(t == 2) { // 启动时冠军头像多检查一次更新
     var icon: Loader = new Loader();
     icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
     icon.load(new URLRequest(bar1.id + pofix));
@@ -294,9 +296,9 @@ if(t%int(cfg[15][0])==1){ // 自定义每几帧更新次排序
 
   if(bar1.id != lastid && t > 2) {
 
-    var icon: Loader = new Loader();
-    icon.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
-    icon.load(new URLRequest(bar1.id + pofix));
+    var icon2: Loader = new Loader();
+    icon2.contentLoaderInfo.addEventListener(Event.COMPLETE, iconLoaded);
+    icon2.load(new URLRequest(bar1.id + pofix));
 
     curbub = new CurBub();
     curbub.loadp(bar1.id + pofix);
@@ -419,11 +421,11 @@ function keyPressed(event: KeyboardEvent): void {
     RKcon.x-=2;
   }
   if(event.keyCode == Keyboard.UP) {
-    fadeupy = RKcon.y - Number(cfg[3][0]);
+    fadeupy = RKcon.y - Number(cfg[16][0]);
     RKcon.addEventListener(Event.ENTER_FRAME, fadeup);
   }
   if(event.keyCode == Keyboard.DOWN) {
-    fadeupy = RKcon.y + Number(cfg[3][0]);
+    fadeupy = RKcon.y + Number(cfg[16][0]);
     RKcon.addEventListener(Event.ENTER_FRAME, fadeup);
   }
 }
@@ -432,7 +434,7 @@ function keyPressed(event: KeyboardEvent): void {
 
 function fadeup(event: Event): void {
 
-  RKcon.y -= (RKcon.y-fadeupy)/Number(cfg[3][1]);
+  RKcon.y -= (RKcon.y-fadeupy)/Number(cfg[16][1]);
 
   if(Math.abs(RKcon.y-fadeupy)<1){
     RKcon.y = fadeupy;
